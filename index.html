@@ -1,46 +1,203 @@
 <!doctype html>
-<html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Volwain</title>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Volwain — Sesli Oda</title>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
 :root{color-scheme:dark;--blue:#2a96e8;--bg:#07111c;--panel:#0d1a28;--panel2:#112438;--line:#21425d;--text:#e8f4ff;--muted:#8caac3;--green:#00e6a0;--red:#ff5367}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#0d2941 0,#07111c 55%);font:14px "Segoe UI",system-ui,sans-serif;color:var(--text);min-height:100vh}
-button,input,select{font:inherit}button{border:1px solid #244b69;border-radius:9px;padding:10px 13px;background:#12314a;color:#eaf6ff;cursor:pointer}button:hover{border-color:#2a96e8;background:#174365}button:disabled{opacity:.45;cursor:not-allowed}button.secondary{background:#132638;color:#d9eafa}input,select{width:100%;padding:11px 12px;border:1px solid #28445c;border-radius:9px;background:#081521;color:#fff;outline:none}
-.app{min-height:100vh;display:grid;grid-template-rows:76px minmax(440px,1fr) 155px 28px;gap:10px;padding:10px;max-width:1800px;margin:auto}.topbar{display:flex;align-items:center;gap:18px;border:1px solid var(--line);background:#091725ed;border-radius:16px;padding:12px 18px}
-.brand{display:flex;align-items:center;gap:12px;min-width:240px}.brand-icon{width:48px;height:48px;border:2px solid #2a96e8;border-radius:50%;display:grid;place-items:center;color:#59bdff;font-size:25px}.brand h1{margin:0;font-size:27px}.brand small{color:#54baff;letter-spacing:.2em;font-weight:700}.nav{display:flex;gap:8px;flex:1}.nav button{background:transparent;border-color:transparent;color:#a9c5dc}.nav span{display:block;font-size:11px;margin-top:3px}.connection{margin-left:auto;border:1px solid #1b405a;background:#0c2132;padding:10px 15px;border-radius:10px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--green);margin-right:7px}
-.workspace{display:grid;grid-template-columns:minmax(230px,290px) minmax(350px,1fr) minmax(270px,350px);gap:10px;min-height:0}.panel{background:linear-gradient(160deg,#0c1c2b,#081521);border:1px solid var(--line);border-radius:13px;overflow:hidden;min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;padding:15px;border-bottom:1px solid #1d3b53;font-size:16px;font-weight:700}.panel-body{padding:12px}.section-label{color:#8caac3;font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin:6px 4px 10px}.room-list{display:grid;gap:6px}.room-card{width:100%;display:grid;grid-template-columns:28px 1fr auto;align-items:center;text-align:left;gap:8px;background:#0d2030;border:1px solid transparent;padding:12px;border-radius:9px;color:#dcefff}.room-card .room-icon{color:#48b9ff;font-size:20px}.room-card strong{display:block}.room-card small{display:block;color:#779ab5;font-size:11px;margin-top:3px}.room-card.selected{background:linear-gradient(90deg,#075184,#10324a);border-color:#20a9ff;box-shadow:inset 3px 0 #2a96e8}.room-count{color:#a8cce8;font-size:12px}.user-row{display:grid;grid-template-columns:minmax(100px,1.2fr) 40px minmax(90px,1fr) 40px;gap:8px;align-items:center;padding:13px 12px;border-bottom:1px solid #183247}.avatar{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#143a55;color:#71caff;margin-right:7px}.mic-state{color:var(--green);font-size:18px;text-align:center}.volume-cell{display:flex;align-items:center;gap:5px}.volume-cell input{padding:0;height:5px;accent-color:var(--blue);border:0}.volume-label{font-size:11px;color:#9fc8e7;min-width:30px}.tiny-btn{padding:7px 8px;min-width:32px;background:#102a40}.chat-panel{display:grid;grid-template-rows:auto 1fr auto}.chat-messages{padding:12px;overflow:auto;min-height:200px;font-size:13px}.chat-line{margin:0 0 13px;line-height:1.45;overflow-wrap:anywhere}.chat-name{color:#25c6ff;font-weight:700;margin-right:5px}.chat-system{color:#00dca0}.chat-compose{padding:10px;border-top:1px solid #1d3b53;display:flex;gap:7px}.chat-compose input{min-width:0}.status{font-size:12px;color:#9db9d0;padding:9px 12px;background:#081521;border-top:1px solid #19384f}
-.bottom{display:grid;grid-template-columns:1.2fr 1fr 1.1fr 1fr auto;gap:10px;border:1px solid var(--line);background:#091725ed;border-radius:13px;padding:12px;align-items:stretch}.control-block{padding:3px 12px;border-right:1px solid #1d3b53;min-width:0}.control-title{font-weight:700;margin-bottom:9px;color:#cce5f8}.meter-head{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted);margin-bottom:7px}.meter-track{height:9px;background:#1a3043;border-radius:99px;overflow:hidden}.meter-fill{height:100%;width:0;background:linear-gradient(90deg,#00c987,#28caff);border-radius:99px;transition:width .08s linear}.control-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px;border:1px solid #1d3b53;border-radius:9px;margin-bottom:7px;background:#0b1c2b;font-size:12px}.leave-btn{background:#762735;border-color:#bd4354;min-width:110px}.footer{display:flex;align-items:center;justify-content:space-between;color:#7193ae;font-size:11px;padding:0 10px}
-@media(max-width:1050px){.app{grid-template-rows:auto auto auto auto}.topbar{flex-wrap:wrap}.nav{order:3;width:100%;flex-basis:100%}.workspace{grid-template-columns:220px 1fr}.chat-panel{grid-column:1/-1;min-height:280px}.bottom{grid-template-columns:1fr 1fr}}
-@media(max-width:700px){.workspace{grid-template-columns:1fr}.chat-panel{grid-column:auto}.bottom{grid-template-columns:1fr}.control-block{border-right:0;border-bottom:1px solid #1d3b53}.brand{min-width:170px}.nav button{min-width:0;flex:1;padding:7px}}
-</style></head><body>
+button,input,select{font:inherit}button{border:1px solid #244b69;border-radius:9px;padding:10px 13px;background:#12314a;color:#eaf6ff;cursor:pointer;transition:.15s}button:hover{border-color:#2a96e8;background:#174365}button:disabled{opacity:.45;cursor:not-allowed}button.secondary{background:#132638;color:#d9eafa}button.danger{background:#582330;border-color:#a33c4b;color:#fff}input,select{width:100%;padding:11px 12px;border:1px solid #28445c;border-radius:9px;background:#081521;color:#fff;outline:none}input:focus,select:focus{border-color:var(--blue)}
+.app{min-height:100vh;display:grid;grid-template-rows:76px minmax(500px,1fr) 154px 34px;gap:10px;padding:10px;max-width:1800px;margin:auto}
+.topbar{display:flex;align-items:center;gap:18px;border:1px solid var(--line);background:#091725ed;border-radius:16px;padding:12px 18px;box-shadow:0 0 22px #087dcc20}
+.brand{display:flex;align-items:center;gap:12px;min-width:250px}.brand-icon{width:48px;height:48px;border:2px solid #2a96e8;border-radius:50%;display:grid;place-items:center;color:#59bdff;font-size:25px;box-shadow:0 0 18px #168eea50}.brand h1{margin:0;font-size:27px;letter-spacing:.02em}.brand small{color:#54baff;letter-spacing:.2em;font-weight:700}.nav{display:flex;gap:8px;flex:1}.nav button{min-width:92px;background:transparent;border-color:transparent;color:#a9c5dc}.nav button span{display:block;font-size:11px;margin-top:3px}.connection{margin-left:auto;border:1px solid #1b405a;background:#0c2132;padding:10px 15px;border-radius:10px;min-width:125px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 12px #00e6a0}
+.workspace{display:grid;grid-template-columns:minmax(220px,300px) minmax(400px,1fr) minmax(290px,370px);gap:10px;min-height:0}.panel{background:linear-gradient(160deg,#0c1c2b,#081521);border:1px solid var(--line);border-radius:13px;overflow:hidden;min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;padding:15px;border-bottom:1px solid #1d3b53;font-size:16px;font-weight:700}.panel-body{padding:12px}
+.room-list{display:grid;gap:6px}.section-label{color:#8caac3;font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin:6px 4px}.room-card{width:100%;display:grid;grid-template-columns:28px 1fr auto;align-items:center;text-align:left;gap:8px;background:#0d2030;border:1px solid transparent;padding:12px;border-radius:9px;color:#dcefff}.room-card .room-icon{color:#48b9ff;font-size:20px}.room-card strong{display:block;font-size:14px}.room-card small{display:block;color:#779ab5;font-size:11px;margin-top:3px}.room-card.selected{background:linear-gradient(90deg,#075184,#10324a);border-color:#20a9ff;box-shadow:inset 3px 0 #2a96e8,0 0 14px #0787d52a}.room-count{color:#a8cce8;font-size:12px}.user-list{display:grid;gap:0}.user-row{display:grid;grid-template-columns:minmax(100px,1.1fr) 46px minmax(70px,1fr) 45px 34px;gap:8px;align-items:center;padding:13px 12px;border-bottom:1px solid #183247}.user-row:last-child{border-bottom:0}.user-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.avatar{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#143a55;color:#71caff;margin-right:7px;border:1px solid #2a96e8}.mic-state{color:var(--green);font-size:18px;text-align:center}.voice-bars{display:flex;align-items:center;gap:3px;height:22px}.voice-bars i{display:block;width:4px;height:8px;background:#176d76;border-radius:3px}.voice-bars i:nth-child(2),.voice-bars i:nth-child(3),.voice-bars i:nth-child(4){height:15px;background:#00e6a0}.voice-bars i:nth-child(5){height:19px;background:#00e6a0}.voice-bars i:nth-child(6){height:12px;background:#00e6a0}.volume-cell{display:flex;align-items:center;gap:5px}.volume-cell input{padding:0;height:5px;accent-color:var(--blue);border:0;background:#25415b}.volume-label{font-size:11px;color:#9fc8e7;min-width:31px}.tiny-btn{padding:7px 8px;min-width:32px;background:#102a40}.chat-panel{display:grid;grid-template-rows:auto 1fr auto}.chat-messages{padding:12px;overflow:auto;min-height:200px;max-height:100%;font-size:13px}.chat-line{margin:0 0 13px;line-height:1.45;overflow-wrap:anywhere}.chat-time{color:#6488a5;margin-right:6px}.chat-name{color:#25c6ff;font-weight:700;margin-right:5px}.chat-system{color:#00dca0}.chat-compose{padding:10px;border-top:1px solid #1d3b53;display:flex;gap:7px}.chat-compose input{min-width:0}.status{font-size:12px;color:#9db9d0;padding:9px 12px;background:#081521;border-top:1px solid #19384f}
+.bottom{display:grid;grid-template-columns:1.05fr 1fr 1.15fr 1.35fr auto;gap:10px;border:1px solid var(--line);background:#091725ed;border-radius:13px;padding:12px;align-items:stretch}.control-block{padding:3px 12px;border-right:1px solid #1d3b53;min-width:0}.control-title{font-weight:700;margin-bottom:9px;color:#cce5f8}.big-mic{display:flex;align-items:center;gap:12px}.mic-circle{height:65px;width:65px;flex:0 0 65px;border-radius:50%;border:4px solid #159df5;box-shadow:0 0 20px #159df550;background:#0d3450;color:#8bd6ff;font-size:27px;display:grid;place-items:center}.meter-row{display:flex;align-items:center;gap:8px}.meter-track{height:9px;background:#1a3043;border-radius:99px;overflow:hidden;flex:1}.meter-fill{height:100%;width:0;background:linear-gradient(90deg,#00c987,#28caff);border-radius:99px;transition:width .08s linear}.meter-head{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted);margin-bottom:7px}.control-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;border:1px solid #1d3b53;border-radius:9px;margin-bottom:7px;background:#0b1c2b;font-size:12px}.switch{width:34px;height:18px;border-radius:20px;background:#34536a;position:relative;flex:0 0 34px}.switch:after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;left:2px;top:2px;background:#d4e8f7}.switch.on{background:#168de1}.switch.on:after{left:18px;background:#fff}.leave-btn{background:#762735;border-color:#bd4354;min-width:125px;font-size:14px}.footer{display:flex;align-items:center;justify-content:space-between;color:#7193ae;font-size:11px;padding:0 10px}.footer strong{color:#d8eafa}
+@media(max-width:1100px){.app{grid-template-rows:auto auto auto auto}.topbar{flex-wrap:wrap}.brand{min-width:180px}.nav{order:3;width:100%;flex-basis:100%}.workspace{grid-template-columns:220px 1fr}.chat-panel{grid-column:1/-1;min-height:300px}.bottom{grid-template-columns:1fr 1fr}.leave-btn{min-height:60px}}
+@media(max-width:700px){.app{padding:5px;gap:6px}.workspace{grid-template-columns:1fr}.left-panel{order:1}.center-panel{order:2}.chat-panel{order:3;grid-column:auto}.bottom{grid-template-columns:1fr}.control-block{border-right:0;border-bottom:1px solid #1d3b53;padding:10px}.brand h1{font-size:22px}.nav button{min-width:0;flex:1;padding:8px 3px}.user-row{grid-template-columns:minmax(80px,1fr) 25px minmax(55px,1fr) 34px}.volume-label{display:none}.connection{margin-left:0}}
+.chat-messages strong{color:#27c7ff}.chat-messages span{color:#e0effb}\n</style></head>
+<body>
 <div class="app">
-<header class="topbar"><div class="brand"><div class="brand-icon">♫</div><div><h1>Volwain</h1><small>VOICE • PARTY • GAME</small></div></div><nav class="nav"><button type="button">◉<span>Bağlantı</span></button><button type="button">⚑<span>Yer İmleri</span></button><button id="settingsBtn" type="button">⚙<span>Ayarlar</span></button></nav><div class="connection"><span class="dot" id="dot"></span><strong id="connectionLabel">Yerel önizleme</strong></div></header>
+<header class="topbar">
+ <div class="brand"><div class="brand-icon">♫</div><div><h1>Volwain</h1><small>VOICE • PARTY • GAME</small></div></div>
+ <nav class="nav"><button type="button">◉<span>Bağlantı</span></button><button type="button">⚑<span>Yer İmleri</span></button><button type="button">⚙<span>Ayarlar</span></button><button type="button">🔊<span>Ses Ayarları</span></button></nav>
+ <div class="connection"><span class="dot"></span><strong id="connectionLabel">Hazır</strong><div style="font-size:11px;color:#81a4bf;margin-top:4px">Volwain ses odaları</div></div>
+</header>
 <div class="workspace">
-<aside class="panel"><div class="panel-head">▤ Volwain Sunucusu</div><div class="panel-body"><div class="section-label">Sabit odalar</div><div class="room-list" id="roomList">
-<button class="room-card selected" data-room="1"><span class="room-icon">◖))</span><span><strong>Oda 1</strong><small>Genel sohbet</small></span><span class="room-count">0</span></button>
-<button class="room-card" data-room="2"><span class="room-icon">♬</span><span><strong>Oda 2</strong><small>Oyun odası</small></span><span class="room-count">0</span></button>
-<button class="room-card" data-room="3"><span class="room-icon">♧</span><span><strong>Oda 3</strong><small>Takım odası</small></span><span class="room-count">0</span></button>
-<button class="room-card" data-room="4"><span class="room-icon">☾</span><span><strong>Oda 4</strong><small>Serbest sohbet</small></span><span class="room-count">0</span></button></div>
-<div class="section-label" style="margin-top:22px">Kullanıcı</div><label for="name" style="display:block;margin:0 0 6px;color:#8caac3;font-size:12px">Oyuncu adın</label><input id="name" maxlength="24" placeholder="Örn. Volwain"><label for="mic" style="display:block;margin:12px 0 6px;color:#8caac3;font-size:12px">Mikrofon</label><select id="mic"><option value="">Varsayılan mikrofon</option></select><button id="refreshMic" class="secondary" style="width:100%;margin-top:7px">Mikrofonları yenile</button><div id="micStatus" style="font-size:11px;color:#779ab5;margin-top:7px">Mikrofon izni henüz alınmadı.</div></div></aside>
-<section class="panel"><div class="panel-head"><span id="activeRoomTitle">◉ Oda 1 — Genel sohbet</span><span id="memberCount" style="font-size:12px;color:#8caac3">0 kullanıcı</span></div><div class="user-row" style="color:#81a9c8;font-size:12px;background:#0a1825"><span>Kullanıcı</span><span>Mik.</span><span>Ses seviyesi</span><span>Sustur</span></div><div id="people"><div class="user-row"><span>Henüz odaya katılmadın</span></div></div><div id="status" class="status">Bir oda seç ve “Odaya katıl” düğmesine bas. Bu başlangıç sürümünde ağ bağlantısı henüz kurulmadı.</div></section>
-<section class="panel chat-panel"><div class="panel-head"><span>▤ Oda Sohbeti</span><span id="chatRoomLabel" style="font-size:12px;color:#8caac3">Oda 1</span></div><div id="chatMessages" class="chat-messages"><div class="chat-line"><span class="chat-system">Sistem:</span> Volwain yerel önizlemesine hoş geldin.</div></div><div class="chat-compose"><input id="chatInput" maxlength="400" placeholder="Mesajını yaz…"><button id="sendChat">Gönder</button></div></section>
+ <aside class="panel left-panel">
+  <div class="panel-head"><span>▤ Volwain Sunucusu</span><span style="color:#4bbcff">●</span></div>
+  <div class="panel-body">
+   <div class="section-label">Sabit odalar</div>
+   <div id="roomGrid" class="room-list">
+    <button class="room-card selected" data-room="volwain-oda-1" type="button"><span class="room-icon">◖))</span><span><strong>Oda 1</strong><small>Genel sohbet</small></span><span class="room-count" id="count-1">●</span></button>
+    <button class="room-card" data-room="volwain-oda-2" type="button"><span class="room-icon">♬</span><span><strong>Oda 2</strong><small>Oyun odası</small></span><span class="room-count" id="count-2">●</span></button>
+    <button class="room-card" data-room="volwain-oda-3" type="button"><span class="room-icon">♧</span><span><strong>Oda 3</strong><small>Takım odası</small></span><span class="room-count" id="count-3">●</span></button>
+    <button class="room-card" data-room="volwain-oda-4" type="button"><span class="room-icon">☾</span><span><strong>Oda 4</strong><small>Serbest sohbet</small></span><span class="room-count" id="count-4">●</span></button>
+   </div>
+   <div class="section-label" style="margin-top:22px">Bağlantı bilgisi</div>
+   <div style="font-size:12px;line-height:2;color:#8caac3">Bağlı oda: <strong id="roomLabel" style="color:#e8f4ff">Oda 1 — Genel sohbet</strong><br>Kullanıcı: <strong id="nameLabel" style="color:#e8f4ff">Henüz bağlanmadı</strong></div>
+   <label for="name" style="display:block;margin:15px 0 6px;color:#8caac3;font-size:12px">Kullanıcı adın</label><input id="name" maxlength="24" placeholder="Örn. Volwain">
+   <label for="mic" style="display:block;margin:12px 0 6px;color:#8caac3;font-size:12px">Mikrofon cihazı</label>
+   <select id="mic"><option value="">Varsayılan mikrofon</option></select>
+   <button id="refreshMic" class="secondary" type="button" style="width:100%;margin-top:7px">Mikrofonları yenile</button>
+   <div id="micStatus" style="font-size:11px;color:#779ab5;margin-top:7px">Mikrofon listesi yükleniyor…</div>
+  </div>
+ </aside>
+ <section class="panel center-panel">
+  <div class="panel-head"><span id="activeRoomTitle">◉ Oda 1 — Genel sohbet</span><span style="font-size:12px;color:#8caac3" id="memberCount">Kullanıcılar</span></div>
+  <div class="user-row" style="color:#81a9c8;font-size:12px;background:#0a1825"><span>Kullanıcı</span><span>Mik.</span><span>Ses seviyesi</span><span>Ses</span><span>×</span></div>
+  <div id="people" class="user-list"><div class="user-row"><span class="user-name">Henüz kimse bağlanmadı</span></div></div>
+  <div id="status" class="status">Hazır. Bir odayı seçip “Seçili odaya katıl” düğmesine bas.</div>
+ </section>
+ <section class="panel chat-panel">
+  <div class="panel-head"><span>▤ Oda Sohbeti</span><span id="chatRoomLabel" style="font-size:12px;color:#8caac3">Oda 1</span></div>
+  <div id="chatMessages" class="chat-messages"><div class="chat-line"><span class="chat-system">Sistem:</span> Odaya bağlanınca mesajlaşabilirsin.</div></div>
+  <div class="chat-compose"><input id="chatInput" maxlength="400" placeholder="Mesajını yaz…"><button id="sendChat" type="button">Gönder</button></div>
+ </section>
 </div>
-<section class="bottom"><div class="control-block"><div class="control-title">Mikrofon göstergesi</div><div class="meter-head"><span id="micLevelText">Bekleniyor</span><span id="micPct">0%</span></div><div class="meter-track"><div id="micLevelFill" class="meter-fill"></div></div><button id="micToggle" class="secondary" style="margin-top:13px;width:100%">Mikrofonu aç</button></div><div class="control-block"><div class="control-title">Gelen ses</div><div class="meter-head"><span>Çıkış seviyesi</span><span id="outPct">100%</span></div><div class="meter-track"><div id="outFill" class="meter-fill" style="width:100%"></div></div><button id="outToggle" class="secondary" style="margin-top:13px;width:100%">Gelen sesi sustur</button></div><div class="control-block"><div class="control-title">Bildirim sesleri</div><div class="control-toggle"><span>Giriş / çıkış sesi</span><button id="soundToggle" class="tiny-btn">Açık</button></div><div style="font-size:11px;color:#779ab5">Odaya katılma ve ayrılma sesi</div></div><div class="control-block"><div class="control-title">Oda</div><button id="join" style="width:100%">Odaya katıl</button><div style="font-size:11px;color:#779ab5;margin-top:7px">Şimdilik yerel arayüz önizlemesi.</div></div><button id="leave" class="leave-btn" disabled>↪ Odadan ayrıl</button></section>
-<footer class="footer"><span><strong>Volwain</strong> · Yeni proje başlangıcı</span><span id="footerRoom">Oda 1 seçili</span><span>Sesli bağlantı sunucusu sonraki aşama</span></footer>
+<section class="bottom">
+ <div class="control-block"><div class="control-title">Mikrofon</div><div class="big-mic"><div class="mic-circle">♩</div><div style="min-width:0;flex:1"><div style="font-size:12px;margin-bottom:8px">Mikrofon ses seviyesi</div><div class="meter-head"><span id="micLevelText">Bekleniyor</span></div><div class="meter-track"><div id="micLevelFill" class="meter-fill"></div></div></div></div><button id="mute" class="secondary" disabled style="margin-top:10px;width:100%">Mikrofonu kapat</button><button id="ptt" class="secondary" disabled style="margin-top:7px;width:100%">Bas-Konuş: SPACE tuşuna basılı tut</button><div style="font-size:11px;color:#779ab5;margin-top:5px">Konuşmak için SPACE tuşunu basılı tut.</div></div>
+ <div class="control-block"><div class="control-title">Gelen ses</div><div class="meter-head"><span>Genel çıkış seviyesi</span><span id="masterVolumeText">100%</span></div><input id="masterVolume" type="range" min="0" max="100" value="100" style="padding:0;height:6px;accent-color:#2a96e8"><button id="outputMute" class="secondary" disabled style="margin-top:14px;width:100%">Gelen sesi sustur</button></div>
+ <div class="control-block"><div class="control-title">Ses ayarları</div><div class="control-toggle"><span>Giriş / çıkış sesleri</span><button id="soundToggle" type="button" class="tiny-btn" aria-pressed="true">Açık</button></div><div style="font-size:11px;color:#779ab5">Ses bildirimleri seçeneği</div></div>
+ <div class="control-block"><div class="control-title">Odaya katıl</div><button id="join" type="button" style="width:100%">Seçili odaya katıl</button><div style="font-size:11px;color:#779ab5;margin-top:7px">Oda bağlantısı için internet gerekir.</div></div>
+ <button id="leave" class="danger leave-btn" disabled>↪ Odadan Ayrıl</button>
+</section>
+<footer class="footer"><span><strong>Volwain</strong> · Sesli sohbet prototipi</span><span id="footerRoom">Oda 1 seçili</span><span>Bağlantı durumunu test edin</span></footer>
 </div>
 <script>
-const $=id=>document.getElementById(id);let selectedRoom=1,joined=false,micStream=null,audioCtx=null,analyser=null,raf=0,muted=false,outputMuted=false,sounds=true,people=[];
-const roomNames={1:"Oda 1 — Genel sohbet",2:"Oda 2 — Oyun odası",3:"Oda 3 — Takım odası",4:"Oda 4 — Serbest sohbet"};
-function status(t){$("status").textContent=t}
-function beep(freq=660){if(!sounds)return;try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=freq;g.gain.value=.04;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.12);o.onended=()=>c.close()}catch{}}
-function chat(name,msg,system=false){const d=document.createElement("div");d.className="chat-line";const n=document.createElement("span");n.className=system?"chat-system":"chat-name";n.textContent=(system?"Sistem:":name+":");d.append(n,document.createTextNode(" "+msg));$("chatMessages").appendChild(d);$("chatMessages").scrollTop=$("chatMessages").scrollHeight}
-function render(){const box=$("people");box.innerHTML="";$("memberCount").textContent=(joined?1:0)+" kullanıcı";if(!joined){box.innerHTML='<div class="user-row"><span>Henüz odaya katılmadın</span></div>';return}const row=document.createElement("div");row.className="user-row";const name=document.createElement("span");name.innerHTML='<span class="avatar">♟</span>';name.append(document.createTextNode($("name").value.trim()||"Volwain"));row.append(name);const mic=document.createElement("span");mic.className="mic-state";mic.textContent=muted?"×":"♩";row.append(mic);const v=document.createElement("div");v.className="volume-cell";v.textContent="Sen";row.append(v);const m=document.createElement("button");m.className="tiny-btn";m.textContent="×";m.disabled=true;row.append(m);box.append(row)}
-document.querySelectorAll(".room-card").forEach(b=>b.onclick=()=>{if(joined){status("Önce mevcut odadan ayrıl, sonra başka oda seç.");return}selectedRoom=Number(b.dataset.room);document.querySelectorAll(".room-card").forEach(x=>x.classList.toggle("selected",x===b));$("activeRoomTitle").textContent="◉ "+roomNames[selectedRoom];$("chatRoomLabel").textContent="Oda "+selectedRoom;$("footerRoom").textContent="Oda "+selectedRoom+" seçili";chat("Sistem","Oda "+selectedRoom+" seçildi.",true);});
-async function refreshMics(){try{const devs=await navigator.mediaDevices.enumerateDevices();const sel=$("mic"),old=sel.value;sel.innerHTML='<option value="">Varsayılan mikrofon</option>';devs.filter(d=>d.kind==="audioinput").forEach((d,i)=>{const o=document.createElement("option");o.value=d.deviceId;o.textContent=d.label||"Mikrofon "+(i+1);sel.append(o)});if(old)sel.value=old;$("micStatus").textContent=devs.filter(d=>d.kind==="audioinput").length+" mikrofon bulundu."}catch{$("micStatus").textContent="Mikrofon listesi alınamadı."}}
-async function toggleMic(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;if(raf)cancelAnimationFrame(raf);$("micLevelFill").style.width="0%";$("micLevelText").textContent="Kapalı";$("micPct").textContent="0%";$("micToggle").textContent="Mikrofonu aç";muted=true;render();return}try{micStream=await navigator.mediaDevices.getUserMedia({audio:$("mic").value?{deviceId:{exact:$("mic").value}}:true});audioCtx=new AudioContext();analyser=audioCtx.createAnalyser();analyser.fftSize=256;audioCtx.createMediaStreamSource(micStream).connect(analyser);const data=new Uint8Array(analyser.frequencyBinCount);function tick(){if(!analyser)return;analyser.getByteTimeDomainData(data);let sum=0;for(const x of data){const n=(x-128)/128;sum+=n*n}const pct=Math.min(100,Math.round(Math.sqrt(sum/data.length)*180));$("micLevelFill").style.width=pct+"%";$("micLevelText").textContent=pct>5?"Ses algılanıyor":"Ses bekleniyor";$("micPct").textContent=pct+"%";raf=requestAnimationFrame(tick)}tick();muted=false;$("micToggle").textContent="Mikrofonu kapat";$("micStatus").textContent="Mikrofon izni verildi." ;render()}catch(e){$("micStatus").textContent="Mikrofon izni verilmedi veya cihaz kullanılamıyor.";chat("Sistem","Mikrofon açılamadı. Windows mikrofon izinlerini kontrol et.",true)}}
-$("refreshMic").onclick=refreshMics;$("micToggle").onclick=toggleMic;$("outToggle").onclick=()=>{outputMuted=!outputMuted;$("outToggle").textContent=outputMuted?"Gelen sesi aç":"Gelen sesi sustur";$("outFill").style.width=outputMuted?"0%":"100%";$("outPct").textContent=outputMuted?"0%":"100%";status("Gelen ses "+(outputMuted?"susturuldu.":"açıldı."));};
-$("soundToggle").onclick=()=>{sounds=!sounds;$("soundToggle").textContent=sounds?"Açık":"Kapalı";$("soundToggle").style.borderColor=sounds?"#2a96e8":"#ff5367";};
-$("join").onclick=()=>{if(joined)return;joined=true;$("connectionLabel").textContent="Yerel oturum";$("dot").style.background="#00e6a0";$("name").disabled=true;$("join").disabled=true;$("leave").disabled=false;status(roomNames[selectedRoom]+" seçildi. Bu başlangıç sürümünde başka bilgisayarlara bağlantı henüz eklenmedi.");render();chat("Sistem",roomNames[selectedRoom]+" oturumuna katıldın.",true);beep(660)};
-$("leave").onclick=()=>{joined=false;$("connectionLabel").textContent="Hazır";$("name").disabled=false;$("join").disabled=false;$("leave").disabled=true;status("Odadan ayrıldın.");render();chat("Sistem","Odadan ayrıldın.",true);beep(440)};
-function sendChat(){const msg=$("chatInput").value.trim();if(!msg)return;if(!joined){chat("Sistem","Mesaj göndermek için önce odaya katıl.",true);return}chat($("name").value.trim()||"Volwain",msg);$("chatInput").value=""}
-$("sendChat").onclick=sendChat;$("chatInput").addEventListener("keydown",e=>{if(e.key==="Enter")sendChat()});$("settingsBtn").onclick=()=>chat("Sistem","Ses ayarları aşağıdaki mikrofon, gelen ses ve bildirim kontrollerinde.",true);
-if(navigator.mediaDevices?.enumerateDevices)refreshMics();else $("micStatus").textContent="Mikrofon için masaüstü uygulamasını aç.";
+const $=id=>document.getElementById(id);
+let peer=null,stream=null,roomId="volwain-oda-1",myName="",isHost=false,muted=false,outputMuted=false,connections=new Map(),calls=new Map(),known=new Set(),hostConn=null,meterContext=null,meterFrame=0,pttHeld=false,masterVolume=1,remoteAnalyzers=new Map();
+function addChatMessage(sender,message,own=false){
+ const box=$("chatMessages"); if(box.querySelector(".hint"))box.innerHTML="";
+ const row=document.createElement("div");row.style.margin="6px 0";row.style.overflowWrap="anywhere";
+ const who=document.createElement("strong");who.textContent=sender+": ";who.style.color=own?"#65b9ff":"#c4d5e8";
+ const msg=document.createElement("span");msg.textContent=message;row.append(who,msg);box.appendChild(row);box.scrollTop=box.scrollHeight;
+}
+function sendChat(){
+ const input=$("chatInput"),message=input.value.trim();if(!message)return;
+ if(!peer){addChatMessage("Sistem","Mesaj göndermek için önce odaya bağlan.");return}
+ addChatMessage(myName||"Sen",message,true);
+ const payload={type:"chat",name:myName||"Oyuncu",message:message.slice(0,400)};
+ if(isHost){connections.forEach(x=>{if(x.conn&&x.conn.open)x.conn.send(payload)});}
+ else if(hostConn&&hostConn.open){hostConn.send(payload);}
+ else{addChatMessage("Sistem","Oda bağlantısı yok; mesaj gönderilemedi.");}
+ input.value="";
+}
+$("sendChat").onclick=sendChat;$("chatInput").addEventListener("keydown",e=>{if(e.key==="Enter")sendChat()});
+
+async function refreshMics(){
+ const sel=$("mic"), previous=sel.value;
+ try{
+   // Permission helps browsers reveal device labels.
+   try{const tmp=await navigator.mediaDevices.getUserMedia({audio:true});tmp.getTracks().forEach(t=>t.stop())}catch(e){}
+   const devices=await navigator.mediaDevices.enumerateDevices();
+   const mics=devices.filter(d=>d.kind==="audioinput");
+   sel.innerHTML="";
+   const def=document.createElement("option");def.value="";def.textContent="Varsayılan mikrofon";sel.appendChild(def);
+   mics.forEach((d,i)=>{const o=document.createElement("option");o.value=d.deviceId;o.textContent=d.label||("Mikrofon "+(i+1));sel.appendChild(o)});
+   if(previous && [...sel.options].some(o=>o.value===previous))sel.value=previous;
+   $("micStatus").textContent=mics.length?mics.length+" mikrofon bulundu. Odaya bağlanmadan önce seç.":"Mikrofon bulunamadı; Windows ses ayarlarını kontrol et.";
+ }catch(e){$("micStatus").textContent="Mikrofon listesi alınamadı: "+e.message}
+}
+if(navigator.mediaDevices){$("refreshMic").onclick=refreshMics;window.addEventListener("load",refreshMics);navigator.mediaDevices.addEventListener?.("devicechange",refreshMics)}
+
+const status=t=>$("status").textContent=t;
+function startMicMeter(mediaStream){
+ stopMicMeter();
+ try{
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtx){$("micLevelText").textContent="Desteklenmiyor";return}
+  meterContext=new AudioCtx();
+  const source=meterContext.createMediaStreamSource(mediaStream);
+  const analyser=meterContext.createAnalyser();analyser.fftSize=1024;analyser.smoothingTimeConstant=0.72;
+  source.connect(analyser);
+  const data=new Uint8Array(analyser.fftSize);
+  const draw=()=>{
+   if(!meterContext||!stream)return;
+   analyser.getByteTimeDomainData(data);let sum=0;
+   for(let i=0;i<data.length;i++){const v=(data[i]-128)/128;sum+=v*v}
+   const rms=Math.sqrt(sum/data.length);const percent=Math.max(0,Math.min(100,Math.round(rms*320)));
+   $("micLevelFill").style.width=percent+"%";
+   $("micLevelText").textContent=muted?"Mikrofon kapalı":(percent<3?"Ses algılanmıyor":percent<35?"Ses algılanıyor":"Yüksek ses");
+   meterFrame=requestAnimationFrame(draw);
+  };
+  meterContext.resume().catch(()=>{});draw();
+ }catch(e){$("micLevelText").textContent="Gösterge başlatılamadı"}
+}
+function stopMicMeter(){if(meterFrame)cancelAnimationFrame(meterFrame);meterFrame=0;if(meterContext){meterContext.close().catch(()=>{});meterContext=null}const fill=$("micLevelFill");if(fill)fill.style.width="0%";const label=$("micLevelText");if(label)label.textContent="Bekleniyor";}
+function safeRoom(){return roomId}
+document.querySelectorAll(".room-card").forEach(btn=>btn.addEventListener("click",()=>{if(peer)return;roomId=btn.dataset.room;document.querySelectorAll(".room-card").forEach(b=>b.classList.toggle("selected",b===btn));const num=roomId.slice(-1);const label=btn.querySelector("strong")?.textContent||("Oda "+num);const sub=btn.querySelector("small")?.textContent||["Genel sohbet","Oyun odası","Takım odası","Serbest sohbet"][Number(num)-1];$("roomLabel").textContent=label+" — "+sub;$("activeRoomTitle").textContent="◉ "+label+" — "+sub;$("chatRoomLabel").textContent=label;$("footerRoom").textContent=label+" seçili";})); 
+$("soundToggle").onclick=()=>{const b=$("soundToggle");const on=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",String(on));b.textContent=on?"Açık":"Kapalı";b.style.borderColor=on?"#2a96e8":"#ff5367";};
+function render(){
+ const box=$("people");box.innerHTML="";
+ const entries=[{id:"self",name:(myName||"Sen")+" (sen)",self:true},...Array.from(connections.entries()).map(([id,x])=>({id,name:x.name||"Oyuncu"}))];
+ $("memberCount").textContent=entries.length+" kullanıcı";
+ if(entries.length===1){box.innerHTML='<div class="user-row"><span class="user-name">Henüz kimse bağlanmadı</span></div>';return}
+ entries.forEach(p=>{
+  const d=document.createElement("div");d.className="user-row";
+  const name=document.createElement("span");name.className="user-name";const av=document.createElement("span");av.className="avatar";av.textContent="♟";name.appendChild(av);name.appendChild(document.createTextNode(p.name));d.appendChild(name);
+  const mic=document.createElement("span");mic.className="mic-state";mic.id="mic-"+p.id;mic.textContent=p.self?(muted?"×":(pttHeld?"🎙":"♩")):"♩";d.appendChild(mic);
+  const volume=document.createElement("div");volume.className="volume-cell";
+  if(!p.self){const slider=document.createElement("input");slider.type="range";slider.min="0";slider.max="150";slider.value="100";slider.title="Bu kişinin ses seviyesi";const label=document.createElement("span");label.className="volume-label";label.textContent="100%";slider.addEventListener("input",()=>{label.textContent=slider.value+"%";const audio=document.getElementById("audio-"+p.id);if(audio)audio.volume=outputMuted?0:masterVolume*Math.min(1,Number(slider.value)/100)});volume.append(slider,label)}else{volume.innerHTML='<span style="color:#8caac3;font-size:12px">Yerel</span>'}d.appendChild(volume);
+  const listen=document.createElement("button");listen.className="tiny-btn";listen.textContent="🎧";listen.title="Bu kişinin sesini kapat/aç";if(!p.self)listen.onclick=()=>{const audio=document.getElementById("audio-"+p.id);if(audio){audio.muted=!audio.muted;listen.style.borderColor=audio.muted?"#ff5367":"#244b69"}};else listen.disabled=true;d.appendChild(listen);
+  const placeholder=document.createElement("button");placeholder.className="tiny-btn";placeholder.textContent="×";placeholder.title="Mikrofon durumu";placeholder.disabled=true;d.appendChild(placeholder);box.appendChild(d);
+ });
+}
+function ui(on){$("join").disabled=on;$("mute").disabled=!on;$("ptt").disabled=!on;$("outputMute").disabled=!on;$("leave").disabled=!on;document.querySelectorAll(".room-card").forEach(b=>b.disabled=on)}
+async function start(host){
+ if(peer)return;
+ roomId=safeRoom();myName=$("name").value.trim().slice(0,24)||"Oyuncu";isHost=host;
+ if(roomId.length<3){status("Oda kodu en az 3 karakter olmalı.");return}
+ try{const selected=$("mic").value;const audio=selected?{deviceId:{exact:selected},echoCancellation:true,noiseSuppression:true,autoGainControl:true}:{echoCancellation:true,noiseSuppression:true,autoGainControl:true};stream=await navigator.mediaDevices.getUserMedia({audio,video:false});stream.getAudioTracks().forEach(t=>t.enabled=false);muted=false;pttHeld=false;$("ptt").textContent="Bas-Konuş: SPACE tuşuna basılı tut"}
+ catch(e){status("Mikrofon açılamadı. Tarayıcı mikrofon iznini kontrol et.\n"+e.message);return}
+ startMicMeter(stream);
+ const id="volwain-"+roomId;
+ try{peer=new Peer(id,{debug:1})}catch(e){status("Bağlantı başlatılamadı: "+e.message);cleanup(false);return}
+ status("Sunucuya bağlanılıyor…");
+ peer.on("open",id=>{
+   ui(true);status("Bağlantı kuruldu. Seçili oda: "+roomId.replace("volwain-",""));$("connectionLabel").textContent="Bağlı";$("nameLabel").textContent=myName;
+   if(!host){hostConn=peer.connect("volwain-"+roomId,{reliable:true});wireData(hostConn,true)}
+ });
+ peer.on("connection",conn=>{if(!isHost){conn.close();return}wireData(conn,false)});
+ peer.on("call",call=>{call.answer(stream);wireCall(call)});
+ peer.on("error",e=>status("Bağlantı hatası: "+e.type+" — "+e.message));
+ peer.on("disconnected",()=>status("Sinyal bağlantısı kesildi. İnternetini kontrol et."));
+ peer.on("close",()=>status("Bağlantı kapandı."));
+}
+function wireData(conn,toHost){
+ conn.on("open",()=>{if(toHost){conn.send({type:"join",name:myName,id:peer.id});} });
+ conn.on("data",msg=>{
+  if(!msg||!msg.type)return;
+  if(isHost){
+   if(msg.type==="join"){connections.set(msg.id,{name:msg.name,conn});known.add(msg.id);render();broadcastPeers();callPeer(msg.id);status("Oda açık. Arkadaşların oda koduyla katılabilir.");}
+   if(msg.type==="chat"){connections.forEach((x,id)=>{if(id!==msg.id&&x.conn&&x.conn.open)x.conn.send(msg)});}
+   if(msg.type==="leave"){connections.delete(msg.id);known.delete(msg.id);render();broadcastPeers();}
+  }else{
+   if(msg.type==="peers"){msg.peers.forEach(p=>{if(p.id!==peer.id&&!known.has(p.id)){known.add(p.id);if(p.id!== "oyunsesi-"+roomId)callPeer(p.id)}});}
+   if(msg.type==="chat"){addChatMessage(msg.name||"Oyuncu",msg.message||"");}
+   if(msg.type==="welcome"){connections.set(msg.id,{name:msg.name});render();}
+  }
+ });
+ conn.on("close",()=>{if(isHost){for(const [id,x] of connections)if(x.conn===conn){connections.delete(id);known.delete(id);render();broadcastPeers()}}});
+}
+function broadcastPeers(){
+ const peers=[{id:peer.id,name:myName},...Array.from(connections.entries()).map(([id,x])=>({id,name:x.name}))];
+ connections.forEach(x=>{if(x.conn&&x.conn.open)x.conn.send({type:"peers",peers})});
+ connections.forEach((x,id)=>{if(x.conn&&x.conn.open)x.conn.send({type:"welcome",id:peer.id,name:myName})});
+}
+function callPeer(id){if(!peer||!stream||id===peer.id||calls.has(id))return;try{const c=peer.call(id,stream,{metadata:{name:myName}});if(c)wireCall(c,id)}catch(e){}}
+function wireCall(call,id){const remoteId=id||call.peer;calls.set(remoteId,call);call.on("stream",s=>{let audio=document.getElementById("audio-"+remoteId);if(!audio){audio=document.createElement("audio");audio.id="audio-"+remoteId;audio.autoplay=true;audio.playsInline=true;document.body.appendChild(audio)}audio.srcObject=s;audio.volume=outputMuted?0:masterVolume;audio.play().catch(()=>status("Ses için uygulamaya tıklayıp oynatmayı etkinleştir."));watchRemoteVoice(remoteId,s)});call.on("close",()=>{calls.delete(remoteId);remoteAnalyzers.delete(remoteId);const a=document.getElementById("audio-"+remoteId);if(a)a.remove();render()});call.on("error",()=>{calls.delete(remoteId)})}
+function watchRemoteVoice(id,mediaStream){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const ctx=new AC(),src=ctx.createMediaStreamSource(mediaStream),an=ctx.createAnalyser();an.fftSize=512;src.connect(an);const data=new Uint8Array(an.frequencyBinCount);remoteAnalyzers.set(id,{ctx,an,data});const tick=()=>{const item=remoteAnalyzers.get(id);if(!item)return;item.an.getByteTimeDomainData(item.data);let sum=0;for(const v of item.data){const x=(v-128)/128;sum+=x*x}const rms=Math.sqrt(sum/item.data.length);const el=$("mic-"+id);if(el){el.textContent=rms>0.035?"🎙":"♩";el.style.color=rms>0.035?"#00e6a0":"#66849c"}requestAnimationFrame(tick)};ctx.resume().catch(()=>{});tick()}catch(e){}}
+function setPtt(on){pttHeld=!!on&&!muted&&!!stream; if(stream)stream.getAudioTracks().forEach(t=>t.enabled=pttHeld);const b=$("ptt");if(b){b.textContent=pttHeld?"🎙 Konuşuyorsun — bırakınca kapanır":"Bas-Konuş: SPACE tuşuna basılı tut";b.style.borderColor=pttHeld?"#00e6a0":"#244b69"}const self=$("mic-self");if(self)self.textContent=pttHeld?"🎙":"♩";}
+$("join").onclick=()=>start(false);
+$("mute").onclick=()=>{if(!stream)return;muted=!muted;if(muted)setPtt(false);$("mute").textContent=muted?"Mikrofonu aç":"Mikrofonu kapat";if(!muted)status("Mikrofon hazır. Konuşmak için SPACE tuşunu basılı tut.")};
+$("ptt").addEventListener("pointerdown",e=>{e.preventDefault();if(stream&&!muted)setPtt(true)});["pointerup","pointerleave","pointercancel"].forEach(ev=>$("ptt").addEventListener(ev,()=>setPtt(false)));
+window.addEventListener("keydown",e=>{if(e.code==="Space"&&!e.repeat&&stream&&!muted&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||"")){e.preventDefault();setPtt(true)}});
+window.addEventListener("keyup",e=>{if(e.code==="Space")setPtt(false)});window.addEventListener("blur",()=>setPtt(false));
+$("masterVolume").addEventListener("input",()=>{masterVolume=Number($("masterVolume").value)/100;$("masterVolumeText").textContent=$("masterVolume").value+"%";document.querySelectorAll('audio[id^="audio-"]').forEach(a=>{const row=a.id.slice(6);const slider=document.querySelector('#mic-'+CSS.escape(row))?.parentElement?.querySelector('.volume-cell input');const personal=slider?Number(slider.value)/100:1;a.volume=outputMuted?0:masterVolume*Math.min(1,personal)})});
+$("outputMute").onclick=()=>{outputMuted=!outputMuted;document.querySelectorAll("audio[id^=\"audio-\"]").forEach(a=>a.volume=outputMuted?0:masterVolume);$("outputMute").textContent=outputMuted?"Gelen sesi aç":"Gelen sesi sustur"};
+function cleanup(send=true){if(send&&hostConn&&hostConn.open)hostConn.send({type:"leave",id:peer?.id});calls.forEach(c=>{try{c.close()}catch{}});calls.clear();connections.forEach(x=>{try{x.conn?.close()}catch{}});connections.clear();setPtt(false);stopMicMeter();remoteAnalyzers.forEach(x=>x.ctx.close().catch(()=>{}));remoteAnalyzers.clear();if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;if(peer){try{peer.destroy()}catch{}}peer=null;hostConn=null;known.clear();document.querySelectorAll("audio[id^='audio-']").forEach(a=>a.remove());ui(false);render();status("Bağlantı kesildi.")}
+$("leave").onclick=()=>cleanup(true);
+window.addEventListener("beforeunload",()=>cleanup(true));
 </script></body></html>
