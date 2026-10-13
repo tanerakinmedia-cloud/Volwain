@@ -1,0 +1,10 @@
+VOLWAIN YENI PROJE - ADIM ADIM
+1) Bu ZIP dosyasini bir klasore ayikla.
+2) GitHub'da yeni bir repository olustur: Volwain (Public veya Private).
+3) GitHub Desktop > File > Add local repository ile bu klasordeki Volwain klasorunu sec. Klasor repo degilse Create a repository secenegini kullan.
+4) Commit to main yap, sonra Publish repository veya Push origin ile GitHub'a gonder.
+5) GitHub reposunda Actions sekmesine gir. Workflow baslamazsa Volwain Windows Kurulum Dosyasi workflow'unu secip Run workflow yap.
+6) Yeşil tamamlaninca workflow sayfasindaki Artifacts bolumunden Volwain-Windows-Setup dosyasini indir ve ZIP'i ayikla.
+7) Volwain-Setup-1.0.0.exe dosyasini calistir.
+
+UYARI: Bu ilk paket arayuz ve yerel mikrofon göstergesi prototipidir; internet üzerinden gerçek çok kullanıcılı ses/chat için sonraki aşamada WebRTC sinyalleşme ve oda sunucusu eklenmelidir.
